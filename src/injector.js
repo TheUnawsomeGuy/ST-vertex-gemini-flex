@@ -10,6 +10,10 @@ export const SERVICE_TIERS = Object.freeze({
     PRIORITY: 'priority',
 });
 
+export const DEFAULT_UNSUPPORTED_MODELS = Object.freeze([
+    'gemini-4-argon',
+]);
+
 /**
  * Checks if a given model identifier represents a Google Gemini model.
  * Rejects Claude-on-Vertex and non-Gemini identifiers.
@@ -43,6 +47,37 @@ export function isGeminiModel(model) {
 }
 
 /**
+ * Checks if a model supports Vertex AI Flex PayGo.
+ * Gemini 4 Argon and other reasoning/frontier preview models currently reject Flex headers on Vertex.
+ *
+ * @param {string|null|undefined} model Model identifier string
+ * @param {string[]|string|null|undefined} customExclusions Additional models to exclude
+ * @returns {boolean}
+ */
+export function isFlexSupportedModel(model, customExclusions = []) {
+    if (!isGeminiModel(model)) {
+        return false;
+    }
+
+    const normalized = model.trim().toLowerCase();
+    const exclusions = Array.isArray(customExclusions)
+        ? [...DEFAULT_UNSUPPORTED_MODELS, ...customExclusions]
+        : [...DEFAULT_UNSUPPORTED_MODELS];
+
+    for (const item of exclusions) {
+        if (!item || typeof item !== 'string') {
+            continue;
+        }
+        const excluded = item.trim().toLowerCase();
+        if (excluded && (normalized === excluded || normalized.endsWith('/' + excluded))) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * Checks whether Flex parameters should be injected into the given generation payload.
  *
  * @param {object|null|undefined} payload Generation parameters payload
@@ -62,7 +97,7 @@ export function shouldInjectFlex(payload, settings) {
     if (payload.chat_completion_source !== 'vertexai') {
         return false;
     }
-    return isGeminiModel(payload.model);
+    return isFlexSupportedModel(payload.model, settings.unsupported_models);
 }
 
 /**

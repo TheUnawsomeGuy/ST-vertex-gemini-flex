@@ -1,4 +1,4 @@
-import { isGeminiModel, SERVICE_TIERS } from './injector.js';
+import { isGeminiModel, isFlexSupportedModel, SERVICE_TIERS } from './injector.js';
 
 /**
  * Calculates the display status for the API Selector live status card.
@@ -22,6 +22,14 @@ export function getCardStatus(model, region, settings) {
             state: 'standby',
             label: 'Standby',
             message: 'Non-Gemini model selected; Flex Mode safely bypassed.',
+        };
+    }
+
+    if (!isFlexSupportedModel(model, settings?.unsupported_models)) {
+        return {
+            state: 'standby',
+            label: 'Unsupported',
+            message: `"${model}" is not supported by Vertex Flex PayGo (bypassed to avoid API errors).`,
         };
     }
 

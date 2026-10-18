@@ -10,6 +10,9 @@
                     <span>
                         <i class="fa-solid fa-bolt" style="color: #48bb78; margin-right: 6px;"></i>
                         <b>Flex PayGo:</b> Reduces Google Vertex AI token costs by <b>50%</b> for Gemini models by sending dynamic routing headers (<code>X-Vertex-AI-LLM-Shared-Request-Type: flex</code>) and directing traffic to the global endpoint. Works in both Express Mode (API Key) and Full Mode (Service Account JSON).
+                        <br/><br/>
+                        <i class="fa-solid fa-circle-info" style="color: #63b3ed; margin-right: 6px;"></i>
+                        <b>Model Compatibility:</b> Supported on Gemini Flash and Standard Pro models (e.g. <code>gemini-3.8-flash</code>). Frontier reasoning models (e.g. <code>gemini-4-argon</code>) are unsupported by Google Vertex Flex and are automatically bypassed to prevent API errors.
                     </span>
                 </div>
 

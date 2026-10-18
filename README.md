@@ -11,10 +11,20 @@ A lightweight, non-destructive extension for **TauriTavern** and **SillyTavern**
   - **Express Mode:** Fully compatible with API Key + Project ID authentication.
   - **Full Mode:** Fully compatible with Service Account JSON OAuth2 authentication.
 - 🌍 **Automatic Global Routing:** Automatically enforces the required `locations/global` endpoint for Flex PayGo without breaking regional settings.
-- 🛡️ **Model Safety Guard:** Strictly targets Gemini models (e.g., `gemini-4-argon`, `gemini-3.8-flash`, `gemini-2.5-pro`), safely bypassing Anthropic Claude models on Vertex AI.
+- 🛡️ **Model Safety & Compatibility Guard:** Strictly targets Gemini models supporting Flex PayGo (such as `gemini-3.8-flash`, `gemini-3.7-flash`, `gemini-2.5-pro`, `gemini-1.5-flash`). Automatically bypasses Claude models and reasoning models (such as `gemini-4-argon`) where Google Vertex does not support Flex PayGo, ensuring calls continue cleanly without API errors.
 - 🎛️ **API Selector Status Card:** Displays a live indicator badge and quick-toggle directly inside the **Vertex AI API settings form** beneath the Model dropdown.
 - 🔀 **Tier Selection:** Easily switch between `Flex PayGo (flex)` (50% cheaper, best-effort latency) and `Priority Tier (priority)` (dedicated capacity).
 - 🧩 **Preserves Custom Headers:** Non-destructively parses existing custom JSON/YAML headers before appending the Flex headers.
+
+---
+
+## Model Eligibility
+
+Google Cloud Vertex AI only supports Flex PayGo (`X-Vertex-AI-LLM-Shared-Request-Type: flex`) on high-throughput standard and Flash models:
+- **Supported:** `gemini-3.8-flash`, `gemini-3.7-flash`, `gemini-3.5-flash`, `gemini-2.5-flash`, `gemini-2.5-pro`, `gemini-1.5-flash`, `gemini-1.5-pro`.
+- **Unsupported (Auto-Bypassed):** `gemini-4-argon` and frontier reasoning preview models.
+
+When an unsupported model like `gemini-4-argon` is selected, the extension displays `[Unsupported]` in the status badge and gracefully passes requests through without injecting Flex headers, so your chat completion succeeds normally at standard rates instead of failing with `flex api is not supported for this model`.
 
 ---
 

@@ -15,6 +15,13 @@ test('getCardStatus correctly returns standby for Claude models on Vertex', () =
     assert.ok(status.message.includes('Non-Gemini model'));
 });
 
+test('getCardStatus correctly reports standby for Gemini 4 Argon (unsupported by Vertex Flex)', () => {
+    const status = getCardStatus('gemini-4-argon', 'global', { enabled: true });
+    assert.equal(status.state, 'standby');
+    assert.equal(status.label, 'Unsupported');
+    assert.ok(status.message.includes('Gemini 4 Argon') || status.message.includes('not supported'));
+});
+
 test('getCardStatus correctly returns active for Gemini models', () => {
     const status = getCardStatus('gemini-3.8-flash', 'global', {
         enabled: true,

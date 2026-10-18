@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
     isGeminiModel,
+    isFlexSupportedModel,
     shouldInjectFlex,
     injectFlexParameters,
     extractCustomHeaders,
@@ -29,6 +30,21 @@ test('isGeminiModel correctly rejects Claude-on-Vertex and unknown models', () =
     assert.equal(isGeminiModel(undefined), false);
 });
 
+test('isFlexSupportedModel rejects Gemini 4 Argon and unsupported models on Vertex', () => {
+    // Supported
+    assert.equal(isFlexSupportedModel('gemini-3.8-flash'), true);
+    assert.equal(isFlexSupportedModel('gemini-3.7-flash'), true);
+    assert.equal(isFlexSupportedModel('gemini-3.5-flash'), true);
+    assert.equal(isFlexSupportedModel('gemini-2.5-pro'), true);
+    assert.equal(isFlexSupportedModel('gemini-1.5-pro'), true);
+
+    // Unsupported on Vertex Flex PayGo
+    assert.equal(isFlexSupportedModel('gemini-4-argon'), false);
+    assert.equal(isFlexSupportedModel('models/gemini-4-argon'), false);
+    assert.equal(isFlexSupportedModel('claude-sonnet-4-5'), false);
+    assert.equal(isFlexSupportedModel('gpt-4o'), false);
+});
+
 test('shouldInjectFlex verifies all conditions', () => {
     const validSettings = { enabled: true, tier: 'flex', force_global_region: true };
     const validPayload = { chat_completion_source: 'vertexai', model: 'gemini-3.8-flash' };
@@ -44,6 +60,9 @@ test('shouldInjectFlex verifies all conditions', () => {
 
     // Claude model on Vertex
     assert.equal(shouldInjectFlex({ ...validPayload, model: 'claude-sonnet-4-5' }, validSettings), false);
+
+    // Gemini 4 Argon on Vertex (Flex not supported by Google)
+    assert.equal(shouldInjectFlex({ ...validPayload, model: 'gemini-4-argon' }, validSettings), false);
 
     // Missing payload or settings
     assert.equal(shouldInjectFlex(null, validSettings), false);
