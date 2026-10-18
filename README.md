@@ -18,13 +18,17 @@ A lightweight, non-destructive extension for **TauriTavern** and **SillyTavern**
 
 ---
 
-## Model Eligibility
+## Model Eligibility: Google AI Studio vs Google Cloud Vertex AI
 
-Google Cloud Vertex AI only supports Flex PayGo (`X-Vertex-AI-LLM-Shared-Request-Type: flex`) on high-throughput standard and Flash models:
-- **Supported:** `gemini-3.8-flash`, `gemini-3.7-flash`, `gemini-3.5-flash`, `gemini-2.5-flash`, `gemini-2.5-pro`, `gemini-1.5-flash`, `gemini-1.5-pro`.
-- **Unsupported (Auto-Bypassed):** `gemini-4-argon` and frontier reasoning preview models.
+There is an important platform distinction between **Google AI Studio** (`ai.google.dev`) and **Google Cloud Vertex AI** (`cloud.google.com/vertex-ai`):
 
-When an unsupported model like `gemini-4-argon` is selected, the extension displays `[Unsupported]` in the status badge and gracefully passes requests through without injecting Flex headers, so your chat completion succeeds normally at standard rates instead of failing with `flex api is not supported for this model`.
+- **Google AI Studio (`ai.google.dev`):** Supports Flex inference for `gemini-4-argon` via the Gemini Developer API (`generativelanguage.googleapis.com`) using their Interactions API with `"service_tier": "flex"`.
+- **Google Cloud Vertex AI (`cloud.google.com/vertex-ai`):** TauriTavern/SillyTavern's Vertex provider connects to Google Cloud's enterprise infrastructure (`aiplatform.googleapis.com`). Google Cloud's **Flex PayGo** service tier (`X-Vertex-AI-LLM-Shared-Request-Type: flex`) is currently only enabled on high-throughput Flash and standard 3.x/2.5 models (`gemini-3.8-flash`, `gemini-3.7-flash`, etc.). Vertex AI has not yet activated Flex PayGo for `gemini-4-argon` on their global endpoint, which is why Vertex AI rejects calls with `flex api is not supported for this model`.
+
+### How the Extension Handles This
+
+- **Automatic Bypass (Default):** The extension automatically detects when `gemini-4-argon` is selected on Vertex AI, shows `[Unsupported on Vertex]`, and safely bypasses Flex headers. This ensures chat completions with Argon continue seamlessly at standard rates rather than crashing.
+- **Configurable Control:** In the extension settings, you can toggle **"Bypass Models Unsupported by Vertex Flex"**. If Google Cloud enables Vertex Flex PayGo for `gemini-4-argon` in the future, simply uncheck this option to route Argon through Flex immediately.
 
 ---
 

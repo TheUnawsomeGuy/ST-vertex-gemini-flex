@@ -18,6 +18,7 @@ test('settings.html exists and has required control inputs', () => {
     assert.ok(content.includes('value="priority"'), 'should have priority tier option');
     assert.ok(content.includes('id="vertex_gemini_flex_force_global"'), 'should have force global toggle');
     assert.ok(content.includes('id="vertex_gemini_flex_show_api_card"'), 'should have show api card toggle');
+    assert.ok(content.includes('id="vertex_gemini_flex_bypass_unsupported"'), 'should have bypass unsupported models toggle');
     assert.ok(content.includes('50%'), 'should mention 50% discount');
 });
 

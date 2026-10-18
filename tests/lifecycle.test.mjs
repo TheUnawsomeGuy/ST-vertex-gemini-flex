@@ -18,8 +18,12 @@ test('getCardStatus correctly returns standby for Claude models on Vertex', () =
 test('getCardStatus correctly reports standby for Gemini 4 Argon (unsupported by Vertex Flex)', () => {
     const status = getCardStatus('gemini-4-argon', 'global', { enabled: true });
     assert.equal(status.state, 'standby');
-    assert.equal(status.label, 'Unsupported');
-    assert.ok(status.message.includes('Gemini 4 Argon') || status.message.includes('not supported'));
+    assert.equal(status.label, 'Unsupported on Vertex');
+    assert.ok(status.message.includes('AI Studio') || status.message.includes('Vertex AI'));
+
+    // When bypass_unsupported_models is false, Argon is treated as active
+    const activeStatus = getCardStatus('gemini-4-argon', 'global', { enabled: true, bypass_unsupported_models: false });
+    assert.equal(activeStatus.state, 'active');
 });
 
 test('getCardStatus correctly returns active for Gemini models', () => {

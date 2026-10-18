@@ -97,7 +97,10 @@ export function shouldInjectFlex(payload, settings) {
     if (payload.chat_completion_source !== 'vertexai') {
         return false;
     }
-    return isFlexSupportedModel(payload.model, settings.unsupported_models);
+    if (settings.bypass_unsupported_models !== false && !isFlexSupportedModel(payload.model, settings.unsupported_models)) {
+        return false;
+    }
+    return isGeminiModel(payload.model);
 }
 
 /**

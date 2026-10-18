@@ -15,6 +15,7 @@ const defaultSettings = Object.freeze({
     tier: 'flex',
     force_global_region: true,
     show_api_selector_card: true,
+    bypass_unsupported_models: true,
 });
 
 /**
@@ -163,6 +164,7 @@ function syncSettingsPanel() {
     $('#vertex_gemini_flex_tier').val(settings.tier);
     $('#vertex_gemini_flex_force_global').prop('checked', settings.force_global_region);
     $('#vertex_gemini_flex_show_api_card').prop('checked', settings.show_api_selector_card);
+    $('#vertex_gemini_flex_bypass_unsupported').prop('checked', settings.bypass_unsupported_models !== false);
 }
 
 /**
@@ -222,6 +224,13 @@ async function initSettingsUi() {
         $('#vertex_gemini_flex_show_api_card').off('change').on('change', function () {
             const settings = getSettings();
             settings.show_api_selector_card = $(this).is(':checked');
+            persistSettings();
+            updateApiDrawerCard();
+        });
+
+        $('#vertex_gemini_flex_bypass_unsupported').off('change').on('change', function () {
+            const settings = getSettings();
+            settings.bypass_unsupported_models = $(this).is(':checked');
             persistSettings();
             updateApiDrawerCard();
         });

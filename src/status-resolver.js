@@ -25,11 +25,11 @@ export function getCardStatus(model, region, settings) {
         };
     }
 
-    if (!isFlexSupportedModel(model, settings?.unsupported_models)) {
+    if (settings?.bypass_unsupported_models !== false && !isFlexSupportedModel(model, settings?.unsupported_models)) {
         return {
             state: 'standby',
-            label: 'Unsupported',
-            message: `"${model}" is not supported by Vertex Flex PayGo (bypassed to avoid API errors).`,
+            label: 'Unsupported on Vertex',
+            message: `"${model}" supports Flex on AI Studio, but Vertex AI has not enabled Flex PayGo for it yet (bypassed to prevent API errors).`,
         };
     }
 

@@ -61,8 +61,11 @@ test('shouldInjectFlex verifies all conditions', () => {
     // Claude model on Vertex
     assert.equal(shouldInjectFlex({ ...validPayload, model: 'claude-sonnet-4-5' }, validSettings), false);
 
-    // Gemini 4 Argon on Vertex (Flex not supported by Google)
+    // Gemini 4 Argon on Vertex (Flex not supported by Google Cloud Vertex AI by default)
     assert.equal(shouldInjectFlex({ ...validPayload, model: 'gemini-4-argon' }, validSettings), false);
+
+    // If user explicitly unchecks bypass_unsupported_models, allow gemini-4-argon to inject flex
+    assert.equal(shouldInjectFlex({ ...validPayload, model: 'gemini-4-argon' }, { ...validSettings, bypass_unsupported_models: false }), true);
 
     // Missing payload or settings
     assert.equal(shouldInjectFlex(null, validSettings), false);

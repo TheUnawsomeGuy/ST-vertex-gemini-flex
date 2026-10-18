@@ -53,6 +53,15 @@
                     </label>
                 </div>
                 <small class="notes">Displays an interactive status indicator and quick-toggle directly below the Google Model dropdown in the Vertex AI configuration form.</small>
+
+                <!-- Bypass Unsupported Models Toggle -->
+                <div class="flex-container alignItemsCenter justifyContentSpaceBetween">
+                    <label for="vertex_gemini_flex_bypass_unsupported" class="checkbox_label">
+                        <input id="vertex_gemini_flex_bypass_unsupported" type="checkbox" />
+                        <span><b>Bypass Models Unsupported by Vertex Flex</b></span>
+                    </label>
+                </div>
+                <small class="notes">Automatically bypasses Flex headers for models like <code>gemini-4-argon</code> (which support Flex on Google AI Studio but are not yet enabled for Flex PayGo on Google Cloud Vertex AI), preventing <code>flex api is not supported</code> errors. Uncheck if Google enables Vertex Flex for Argon.</small>
             </div>
         </div>
     </div>
