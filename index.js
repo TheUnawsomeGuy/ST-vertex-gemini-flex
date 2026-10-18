@@ -29,6 +29,34 @@ function getHostContext() {
 }
 
 /**
+ * Dynamically resolves the extension directory name from import.meta.url.
+ * Supports arbitrary folder names (e.g. ST-vertex-gemini-flex or vertex-gemini-flex).
+ *
+ * @param {string} [metaUrl]
+ * @returns {string}
+ */
+export function getExtensionDirectoryName(metaUrl = import.meta?.url) {
+    try {
+        if (metaUrl) {
+            const parsedUrl = new URL(metaUrl, typeof window !== 'undefined' ? window.location?.href : 'http://localhost');
+            const marker = '/scripts/extensions/';
+            const idx = parsedUrl.pathname.indexOf(marker);
+            if (idx !== -1) {
+                const afterMarker = parsedUrl.pathname.slice(idx + marker.length);
+                const segments = afterMarker.split('/');
+                segments.pop(); // remove filename (e.g. index.js)
+                if (segments.length > 0) {
+                    return segments.join('/');
+                }
+            }
+        }
+    } catch (e) {
+        console.debug(LOG_PREFIX, 'Failed to extract extension directory from meta URL:', e);
+    }
+    return 'third-party/ST-vertex-gemini-flex';
+}
+
+/**
  * Retrieves current extension settings.
  */
 function getSettings() {
@@ -172,24 +200,48 @@ function syncSettingsPanel() {
  */
 async function initSettingsUi() {
     const context = getHostContext();
+    const dirName = getExtensionDirectoryName();
     let html = '';
 
+    // 1. Try host extension template renderer using detected directory name
     if (typeof context?.renderExtensionTemplateAsync === 'function') {
         try {
-            html = await context.renderExtensionTemplateAsync('third-party/vertex-gemini-flex', 'settings');
+            html = await context.renderExtensionTemplateAsync(dirName, 'settings');
         } catch (err) {
-            console.debug(LOG_PREFIX, 'Template render deferred:', err);
+            console.debug(LOG_PREFIX, `Template render deferred for "${dirName}":`, err);
         }
     }
 
-    if (!html) {
+    // 2. Try relative fetch based on current module URL
+    if (!html && typeof fetch === 'function') {
         try {
-            const resp = await fetch('/scripts/extensions/third-party/vertex-gemini-flex/settings.html');
+            const templateUrl = new URL('./settings.html', import.meta.url).href;
+            const resp = await fetch(templateUrl);
             if (resp.ok) {
                 html = await resp.text();
             }
-        } catch {
-            // Silently handle standalone test environments
+        } catch (err) {
+            console.debug(LOG_PREFIX, 'Relative template fetch deferred:', err);
+        }
+    }
+
+    // 3. Fallback to candidate absolute paths
+    if (!html && typeof fetch === 'function') {
+        const candidatePaths = [
+            `/scripts/extensions/${dirName}/settings.html`,
+            '/scripts/extensions/third-party/ST-vertex-gemini-flex/settings.html',
+            '/scripts/extensions/third-party/vertex-gemini-flex/settings.html',
+        ];
+        for (const path of candidatePaths) {
+            try {
+                const resp = await fetch(path);
+                if (resp.ok) {
+                    html = await resp.text();
+                    break;
+                }
+            } catch {
+                // Ignore fallback fetch error
+            }
         }
     }
 
@@ -268,10 +320,17 @@ function installFetchInterceptor() {
     };
 }
 
-/**
- * Main initialization entrypoint.
- */
-jQuery(async () => {
+if (typeof jQuery !== 'undefined') {
+    jQuery(async () => {
+        await init();
+    });
+} else if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', async () => {
+        await init();
+    });
+}
+
+export async function init() {
     const context = getHostContext();
     const settings = getSettings();
 
@@ -316,4 +375,4 @@ jQuery(async () => {
             });
         }
     }
-});
+}

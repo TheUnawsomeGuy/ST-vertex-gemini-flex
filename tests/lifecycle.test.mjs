@@ -57,3 +57,31 @@ test('resolveCardDetails returns formatted pill data for active state', () => {
     assert.equal(details.effectiveRegion, 'global');
     assert.equal(details.discount, '50% Off');
 });
+
+test('getExtensionDirectoryName dynamically extracts directory name across installations', async () => {
+    const { getExtensionDirectoryName } = await import('../index.js');
+
+    // Cloned with repo name ST-vertex-gemini-flex
+    assert.equal(
+        getExtensionDirectoryName('http://tauri.localhost/scripts/extensions/third-party/ST-vertex-gemini-flex/index.js'),
+        'third-party/ST-vertex-gemini-flex',
+    );
+
+    // Installed from zip as vertex-gemini-flex
+    assert.equal(
+        getExtensionDirectoryName('http://tauri.localhost/scripts/extensions/third-party/vertex-gemini-flex/index.js'),
+        'third-party/vertex-gemini-flex',
+    );
+
+    // Installed in standard extensions
+    assert.equal(
+        getExtensionDirectoryName('http://tauri.localhost/scripts/extensions/vertex-gemini-flex/index.js'),
+        'vertex-gemini-flex',
+    );
+
+    // Fallback when invalid
+    assert.equal(
+        getExtensionDirectoryName(''),
+        'third-party/ST-vertex-gemini-flex',
+    );
+});
