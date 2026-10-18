@@ -1,0 +1,23 @@
+{
+  "name": "st-vertex-gemini-flex",
+  "version": "1.0.0",
+  "description": "Injects Gemini Flex Mode (Flex PayGo tier with 50% discount) into Google Vertex AI requests.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "keywords": [
+    "sillytavern",
+    "tauritavern",
+    "extension",
+    "vertex-ai",
+    "gemini",
+    "flex-mode"
+  ],
+  "author": "TheUnawsomeGuy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheUnawsomeGuy/ST-vertex-gemini-flex.git"
+  }
+}

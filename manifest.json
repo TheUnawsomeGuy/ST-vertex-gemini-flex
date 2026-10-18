@@ -1,0 +1,12 @@
+{
+    "display_name": "Vertex AI Gemini Flex Mode",
+    "loading_order": 50,
+    "requires": [],
+    "optional": [],
+    "js": "index.js",
+    "css": "style.css",
+    "author": "TheUnawsomeGuy",
+    "version": "1.0.0",
+    "description": "Injects Gemini Flex Mode (Flex PayGo tier with 50% discount) into Google Vertex AI requests.",
+    "homePage": "https://github.com/TheUnawsomeGuy/ST-vertex-gemini-flex"
+}

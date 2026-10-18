@@ -1,0 +1,56 @@
+<div class="vertex-gemini-flex-settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>Vertex AI Gemini Flex Mode</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+            <div class="flex-container flexFlowColumn gap10">
+                <div class="info-block">
+                    <span>
+                        <i class="fa-solid fa-bolt" style="color: #48bb78; margin-right: 6px;"></i>
+                        <b>Flex PayGo:</b> Reduces Google Vertex AI token costs by <b>50%</b> for Gemini models by sending dynamic routing headers (<code>X-Vertex-AI-LLM-Shared-Request-Type: flex</code>) and directing traffic to the global endpoint. Works in both Express Mode (API Key) and Full Mode (Service Account JSON).
+                    </span>
+                </div>
+
+                <!-- Master Toggle -->
+                <div class="flex-container alignItemsCenter justifyContentSpaceBetween">
+                    <label for="vertex_gemini_flex_enabled" class="checkbox_label">
+                        <input id="vertex_gemini_flex_enabled" type="checkbox" />
+                        <span><b>Enable Gemini Flex Mode</b></span>
+                    </label>
+                </div>
+
+                <!-- Service Tier Selection -->
+                <div class="flex-container flexFlowColumn">
+                    <label for="vertex_gemini_flex_tier">
+                        <span><b>Service Tier:</b></span>
+                    </label>
+                    <select id="vertex_gemini_flex_tier" class="text_pole">
+                        <option value="flex">Flex PayGo (50% Cost Discount, Best-Effort Latency)</option>
+                        <option value="priority">Priority Tier (Dedicated Throughput & Reliability)</option>
+                    </select>
+                    <small class="notes">Flex tier provides 50% discount on input/output tokens with variable latency. Priority tier provides highest reliability.</small>
+                </div>
+
+                <!-- Auto Enforce Global Region -->
+                <div class="flex-container alignItemsCenter justifyContentSpaceBetween">
+                    <label for="vertex_gemini_flex_force_global" class="checkbox_label">
+                        <input id="vertex_gemini_flex_force_global" type="checkbox" />
+                        <span><b>Force Global Region</b></span>
+                    </label>
+                </div>
+                <small class="notes">Recommended: Google Vertex AI requires requests to target <code>locations/global</code> for Flex PayGo. Automatically rewrites request region to <code>global</code>.</small>
+
+                <!-- Show in API Selector Drawer -->
+                <div class="flex-container alignItemsCenter justifyContentSpaceBetween">
+                    <label for="vertex_gemini_flex_show_api_card" class="checkbox_label">
+                        <input id="vertex_gemini_flex_show_api_card" type="checkbox" />
+                        <span><b>Show Live Status in API Settings Drawer</b></span>
+                    </label>
+                </div>
+                <small class="notes">Displays an interactive status indicator and quick-toggle directly below the Google Model dropdown in the Vertex AI configuration form.</small>
+            </div>
+        </div>
+    </div>
+</div>
